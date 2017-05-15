@@ -1,1 +1,1 @@
-import '../imports/api/trades.js';
+import '../imports/model/trades.js';
