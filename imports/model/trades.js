@@ -7,7 +7,6 @@ export const Trades = new Mongo.Collection('trades');
 
 if (Meteor.isServer) {
   // This code only runs on the server
-  // Only publish trades that are public or belong to the current user
   Meteor.publish('trades', function tradesPublication() {
     // Trades.remove({});
     return Trades.find({},{sort: {timestamp: -1}, limit: 1000});
@@ -15,36 +14,6 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-  'trades.insert'(date, price, quantity, type) {
-    check(price, Number);
-    check(quantity, Number);
-    check(date, Date);
-    check(type, String);
-
-    // Make sure the user is logged in before inserting a trade
-    if (! this.userId) {
-      //throw new Meteor.Error('not-authorized');
-    }
-    console.log(date + " | " + price + " | " + quantity + " | " + type);
-    return;
-
-    Trades.update({
-      timestamp: date,
-      price: price,
-      quantity: quantity,
-      type: type,
-    },
-    { $set: {
-      timestamp: date,
-      price: price,
-      quantity: quantity,
-      type: type,
-    }
-    },
-    {
-      upsert: true
-    });
-  },
   'trades.importFromFiles'() {
     if(Meteor.isServer){
       fs = require('fs');
@@ -63,17 +32,6 @@ Meteor.methods({
       }
     }    
   },
-  /*'trades.remove'(tradeId) {
-    check(tradeId, String);
-
-    const trade = Trades.findOne(tradeId);
-    if (trade.private && trade.owner !== this.userId) {
-      // If the trade is private, make sure only the owner can delete it
-      throw new Meteor.Error('not-authorized');
-    }
-
-    Trades.remove(tradeId);
-  },*/
   'trades.importFromIotaExchange'() {
     var url = "http://data.iotaexchange.com/proxy";
     //synchronous GET
