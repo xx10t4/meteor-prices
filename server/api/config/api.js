@@ -1,6 +1,6 @@
 // from https://themeteorchef.com/tutorials/writing-an-api#!
 
-import { Trades } from '../../../imports/api/trades.js';
+import { Trades } from '../../../imports/model/trades.js';
 
 API = {
   // Handle the request

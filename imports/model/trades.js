@@ -48,7 +48,7 @@ Meteor.methods({
   'trades.importFromFiles'() {
     if(Meteor.isServer){
       fs = require('fs');
-      const path = "/home/daemmon/projects/iota/github/simple-todos/trades_data/";      
+      const path = "/home/daemmon/projects/iota/github/meteor-prices/trades_data/";      
       var files = fs.readdirSync(path);     
       if(files) {
         for (var i=0; i<files.length; i++) {

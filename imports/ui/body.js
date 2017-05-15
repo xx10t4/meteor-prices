@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
 
-import { Trades } from '../api/trades.js';
+import { Trades } from '../model/trades.js';
 
 import './trade.js';
 import './body.html';
