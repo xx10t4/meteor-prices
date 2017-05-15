@@ -18,7 +18,7 @@ body {
 }
 
 .container {
-  max-width: 600px;
+  width: 1000px;
   margin: 0 auto;
   min-height: 100%;
   background: white;
@@ -49,34 +49,12 @@ form {
   position: relative;
 }
 
-.new-task input {
-  box-sizing: border-box;
-  padding: 10px 0;
-  background: transparent;
-  border: none;
-  width: 100%;
-  padding-right: 80px;
-  font-size: 1em;
-}
-
-.new-task input:focus{
-  outline: 0;
-}
-
 ul {
   margin: 0;
   padding: 0;
   background: white;
 }
 
-.delete {
-  float: right;
-  font-weight: bold;
-  background: none;
-  font-size: 1em;
-  border: none;
-  position: relative;
-}
 
 li {
   position: relative;
@@ -97,18 +75,6 @@ li.checked .text {
   text-decoration: line-through;
 }
 
-li.private {
-  background: #eee;
-  border-color: #ddd;
-}
-
-header .hide-completed {
-  float: right;
-}
-
-.toggle-private {
-  margin-left: 5px;
-}
 
 @media (max-width: 600px) {
   li {
