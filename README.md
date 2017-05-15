@@ -1,11 +1,18 @@
-# Simple Todo List
+# IOTA Prices
 
-The Meteor Tutorial app.
+A Meteor-based app to display IOTA prices from ydx.slack.com
 
-Use it to share a single todo list with your friends. The list updates on everyone's screen in real time, and you can make tasks private if you don't want others to see them.
+Requires Meteor https://www.meteor.com/install and Iron Router
 
-Learn how to build this app by following the [Meteor Tutorial](http://www.meteor.com/install).
+```
+# After meteor is installed
 
-Read more about building apps with Meteor in the [Meteor Guide](http://guide.meteor.com).
+# clone the project
+git clone git@github.com:xx10t4/meteor-prices.git
 
-![screenshot](screenshot.png)
+# add Iron Router
+meteor add iron:router
+
+# run
+meteor
+```
