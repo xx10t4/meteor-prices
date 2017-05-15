@@ -1,16 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
-
 import { Trades } from '../model/trades.js';
-
-import './trade.js';
 import './body.html';
 
 const d3 = require("d3");
 Template.body.onCreated(function bodyOnCreated() {
   this.state = new ReactiveDict();
   Meteor.subscribe('trades');
+  renderTrades();
 });
 
 Template.body.helpers({
@@ -18,47 +16,38 @@ Template.body.helpers({
     const instance = Template.instance();
     return Trades.find({}, { sort: { createdAt: -1 } });
   }
-});
+ });
 
 Template.body.events({
-  'submit .new-trade'(event) {
-    // Prevent default browser form submit
-    event.preventDefault();
-
-    // Get value from form element
-    const target = event.target;
-    const text = target.text.value;
-
-    // Insert a trade into the collection
-    Meteor.call('trades.insert', text);
-
-    // Clear form
-    target.text.value = '';
-  },
-  'change .hide-completed input'(event, instance) {
-    instance.state.set('hideCompleted', event.target.checked);
-  },
   'click .import-files'(event) {
-    Meteor.call('trades.importFromFiles');
+    //Meteor.call('trades.importFromFiles');
   },
   'click .import-exchange'(event) {
-    Meteor.call('trades.importFromIotaExchange');
+    //Meteor.call('trades.importFromIotaExchange');
   }
 });
 
-var refreshRate = 5000; // refresh every 1s
+var refreshRate = 5000; // refresh every 5s
 var g = undefined;
-
 
 function renderTrades() {
 
-    d3.json('/api/v1/trades', function(data) {
+  Meteor.call('trades.importFromIotaExchange');
+
+  d3.json('/api/v1/trades', function(data) {
 
         data.forEach(function(val){
-
+          // D3 needs the timestamps to be converted to Date, not sure why
           val.timestamp = Date.parse(val.timestamp);
-
         });
+
+        // Update the latestTrade indo in header
+        var latestTrade = data[0];
+        $('#latestTrade .price').html( latestTrade.price);
+        $('#latestTrade .quantity').html( latestTrade.quantity);
+        $('#latestTrade .timestamp').html( moment(latestTrade.timestamp).format('MMM Do YYYY, h:mm:ss a'));
+
+        // Build the graph
         var svg = d3.select("svg"),
             margin = {top: 40, right: 50, bottom: 30, left: 75},
             width = +svg.attr("width") - margin.left - margin.right,
@@ -136,15 +125,14 @@ function renderTrades() {
 
        g.selectAll("rect").data(data)
             .enter()
-            .append("rect")           
+            .append("rect")
             .attr("fill", function(d, i) { return d.type == 'UP' ? 'green':'red'; })
             .attr("x", function(d, i) { return Math.round(timeScale(d.timestamp)); })
             .attr("y", function(d, i) { return Math.round(volumeScale(d.quantity)); })
             .attr("height", function(d, i) { return height - Math.round(volumeScale(d.quantity)); })
             .attr("width", 1);
-    });
+  });
 
-    setTimeout(renderTrades, refreshRate);
+  setTimeout(renderTrades, refreshRate);
 }
 
-renderTrades();

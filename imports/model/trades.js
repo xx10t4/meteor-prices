@@ -33,26 +33,28 @@ Meteor.methods({
     }    
   },
   'trades.importFromIotaExchange'() {
-    var url = "http://data.iotaexchange.com/proxy";
-    //synchronous GET
-    var result = HTTP.get(url, {timeout:10000});
-    if(result.statusCode==200) {
-      var json = JSON.parse(result.content);
-      json['trades'].forEach(function(trade){
-        trade['quantity'] = trade['qty'];
-        saveTrade(trade);
-      });
-    } else {
-      console.log("Response issue: ", result.statusCode);
-      var errorJson = JSON.parse(result.content);
-      throw new Meteor.Error(result.statusCode, errorJson.error);
+    if(Meteor.isServer){
+      var url = "http://data.iotaexchange.com/proxy";
+      //synchronous GET
+      var result = HTTP.get(url, {timeout:10000});
+      if(result.statusCode==200) {
+        var json = JSON.parse(result.content);
+        json['trades'].forEach(function(trade){
+          trade['quantity'] = trade['qty'];
+          saveTrade(trade);
+        });
+      } else {
+        console.log("Response issue: ", result.statusCode);
+        var errorJson = JSON.parse(result.content);
+        throw new Meteor.Error(result.statusCode, errorJson.error);
+      }
     }
   }
  });
 
 
 function saveTrade(trade) {
-  console.log(trade);
+  //console.log(trade);
   var date = new Date(trade['timestamp']);
   var price = parseInt(trade['price']);
   var quantity = parseInt(trade['quantity']);
