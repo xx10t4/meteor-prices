@@ -2,10 +2,9 @@ SyncedCron.add({
   name: 'Import data from iotaexchange',
   schedule: function(parser) {
     // parser is a later.parse object
-    return parser.text('every 10 seconds');
+    return parser.text('every 1 minutes');
   },
   job: function() {
-    console.log('importing iotaexchange')
     return Meteor.call('trades.importFromIotaExchange');
   }
 });

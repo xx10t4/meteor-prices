@@ -41,7 +41,7 @@ API = {
   methods: {
     trades: {
       GET: function( context, connection ) {
-        var limit = 4500;
+        var limit = 5000;
         return  API.utility.response(context, 200, Trades.find({},{sort: {timestamp: -1}, limit: limit}).fetch());
 
       }
