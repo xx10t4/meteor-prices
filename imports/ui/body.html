@@ -1,0 +1,15 @@
+<body>
+  <div class="container">
+    <header>
+      <h1>Trades</h1>
+      <button class="import-files"> import files </button>
+      <button class="import-exchange"> import iotaexchange </button>
+    </header>
+
+    <ul>
+      {{#each trades}}
+        {{> trade}}
+      {{/each}}
+    </ul>
+  </div>
+</body>
