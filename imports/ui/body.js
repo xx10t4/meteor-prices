@@ -43,9 +43,9 @@ function renderTrades() {
 
         // Update the latestTrade indo in header
         var latestTrade = data[0];
-        $('#latestTrade .price').html( latestTrade.price);
-        $('#latestTrade .quantity').html( latestTrade.quantity);
-        $('#latestTrade .timestamp').html( moment(latestTrade.timestamp).format('MMM Do YYYY, h:mm:ss a'));
+        $('#latest_price').html( latestTrade.price);
+        $('#latest_quantity').html( latestTrade.quantity);
+        $('#latest_timestamp').html( moment(latestTrade.timestamp).format('MMM Do YYYY, h:mm:ss a'));
 
         // Build the graph
         var svg = d3.select("svg"),

@@ -7,12 +7,15 @@
       <button class="import-exchange"> import iotaexchange </button>
       -->
       <div id="latestTrade">Latest Trade
-        Price (microBTC/Miota) <span class="price"></span> 
-        Quantity <span class="quantity"></span>
-        Time <span class="timestamp"></span>
+        <span class="price label">Price (microBTC/Miota) <span id="latest_price"></span></span> 
+        <span class="quantity label">Quantity <span id="latest_quantity"></span></span>
+        <span class="time label">Time <span id="latest_timestamp"></span></span>
       </div>
     </header>
     <!-- need to explicitly set height and width (?) --> 
     <svg width="1000" height="500"></svg>
+    <footer>
+      Data from <a href="http://iotaexchange.com">iotaexchange.com</a>
+    </footer>
   </div>
 </body>

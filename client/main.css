@@ -39,12 +39,19 @@ h1 {
   margin-right: 1em;
 }
 
-#latestTrade span {
+#latestTrade span.label {
   display: inline-block;
-  padding: 2px 8px;
-  margin-right: 30px;
+  padding: 2px 2px 2px 8px;
+  margin-left: 30px;
   background-color: #315481;
   color: #fff;
+}
+
+#latestTrade span.label span {
+  display: inline-block;
+  padding: 2px 8px;
+  background-color: #fff;
+  color: #315481;
   font-weight: bold;
 }
 
@@ -72,6 +79,10 @@ li.checked {
 
 li.checked .text {
   text-decoration: line-through;
+}
+
+footer {
+  text-align: center;
 }
 
 
