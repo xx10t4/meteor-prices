@@ -1,6 +1,6 @@
 # IOTA Prices
 
-A Meteor-based app to display IOTA prices from ydx.slack.com
+A Meteor-based app to display IOTA prices from ydx.slack.com. Available at http://iota.market
 
 Requires Meteor https://www.meteor.com/install
 

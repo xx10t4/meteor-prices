@@ -50,6 +50,7 @@ h1 {
 #latestTrade span.label span {
   display: inline-block;
   padding: 2px 8px;
+  margin-left: 6px; 
   background-color: #fff;
   color: #315481;
   font-weight: bold;
