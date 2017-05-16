@@ -39,10 +39,13 @@ h1 {
   margin-right: 1em;
 }
 
+h3 {
+  margin: 20px 0px 0px 75px
+}
 #latestTrade span.label {
   display: inline-block;
   padding: 2px 2px 2px 8px;
-  margin-left: 30px;
+  margin-left: 20px;
   background-color: #315481;
   color: #fff;
 }
@@ -83,6 +86,7 @@ li.checked .text {
 }
 
 footer {
+  padding: 30px 0px;
   text-align: center;
 }
 

@@ -9,6 +9,7 @@ Template.body.onCreated(function bodyOnCreated() {
   this.state = new ReactiveDict();
   Meteor.subscribe('trades');
   renderTrades();
+  renderOrders();
 });
 
 Template.body.helpers({
@@ -28,7 +29,8 @@ Template.body.events({
 });
 
 var refreshRate = 5000; // refresh every 5s
-var g = undefined;
+var g_orders = undefined;
+var g_trades = undefined;
 
 function renderTrades() {
 
@@ -45,19 +47,20 @@ function renderTrades() {
         var latestTrade = data[0];
         $('#latest_price').html( latestTrade.price);
         $('#latest_quantity').html( latestTrade.quantity);
-        $('#latest_timestamp').html( moment(latestTrade.timestamp).format('MMM Do YYYY, h:mm:ss a'));
+        $('#latest_timestamp').html( moment(latestTrade.timestamp).format('MM/DD/YYYY h:mm:ss a'));
+        $('#latest_update').html( moment(Date.now()).format('h:mm:ss a'));
 
         // Build the graph
-        var svg = d3.select("svg"),
-            margin = {top: 40, right: 50, bottom: 30, left: 75},
+        var svg = d3.select("#svg_trades"),
+            margin = {top: 20, right: 50, bottom: 30, left: 75},
             width = +svg.attr("width") - margin.left - margin.right,
             height = +svg.attr("height") - margin.top - margin.bottom;
         var priceHeight = height * (2/3);
         var volumeHeight = priceHeight + 10;
         console.log("width:"+svg.attr("width"));
 
-        if(g) g.remove(); // after inital page load, need to remove() on each refresh
-        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        if(g_trades) g_trades.remove(); // after inital page load, need to remove() on each refresh
+        g_trades = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         timeScale = d3.scaleTime().range([0, width]);
         priceScale = d3.scaleLinear().range([priceHeight, 0]);
@@ -88,12 +91,12 @@ function renderTrades() {
         var volumeAxis = d3.axisLeft(volumeScale); 
         volumeAxis.ticks(4);
 
-        g.append("g")
+        g_trades.append("g")
             .attr("transform", "translate(0," + height + ")")
             .call(timeAxis)
             .select(".domain");
 
-        g.append("g")
+        g_trades.append("g")
             .call(priceAxis)
             .append("text")
             .attr("fill", "#000")
@@ -103,7 +106,7 @@ function renderTrades() {
             .attr("text-anchor", "end")
             .text("Price (microBTC/Miota)");
 
-        g.append("g")
+        g_trades.append("g")
             .call(volumeAxis)
             .append("text")
             .attr("fill", "#000")
@@ -114,7 +117,7 @@ function renderTrades() {
             .attr("text-anchor", "end")
             .text("Volume (Miota)");
 
-        g.append("path")
+        g_trades.append("path")
             .datum(data)
             .attr("fill", "none")
             .attr("stroke", "steelblue")
@@ -123,7 +126,7 @@ function renderTrades() {
             .attr("stroke-width", 1)
             .attr("d", priceLine);
 
-       g.selectAll("rect").data(data)
+       g_trades.selectAll("rect").data(data)
             .enter()
             .append("rect")
             .attr("fill", function(d, i) { return d.type == 'UP' ? 'green':'red'; })
@@ -136,3 +139,84 @@ function renderTrades() {
   setTimeout(renderTrades, refreshRate);
 }
 
+function renderOrders() {
+
+    d3.json('http://data.iotaexchange.com/proxy', function(d) {
+
+        var all_orders = d['orders'];
+        var data = [];
+        all_orders.forEach( function (order) {
+            console.log("order:"+order)
+            found = false;
+            data.filter(function( ag_order ) {
+                console.log("ag_order:"+ag_order)
+                if(ag_order.price == order.price) {
+                     
+                    ag_order.qty += order.qty
+                    found = true;    
+                }
+            });
+            if(!found){
+                data.push(order);
+            }
+        });
+
+        console.log(data);
+
+        var svg = d3.select("#svg_orders"),
+            margin = {top: 20, right: 50, bottom: 30, left: 75},
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +svg.attr("height") - margin.top - margin.bottom;
+
+        if(g_orders) g_orders.remove(); // after inital page load, need to remove() on each refresh
+        g_orders = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        priceScale = d3.scaleLinear().range([0, width]);
+        volumeScale = d3.scaleLinear().range([height, 0]);
+
+        volumeScale.domain([0, d3.max(data, function(d) { return d.qty; })]);
+        var price_extent = d3.extent(data, function(d) { return d.price; });
+        price_extent[0] = price_extent[0] - 1; 
+        price_extent[1] = price_extent[1] + 1; 
+        priceScale.domain(price_extent);
+
+        var priceAxis = d3.axisBottom(priceScale); 
+        priceAxis.ticks((price_extent[1] - price_extent[0])/8);
+
+        var volumeAxis = d3.axisLeft(volumeScale); 
+        volumeAxis.ticks(4);
+
+        g_orders.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(priceAxis)
+            .append("text")
+            .attr("fill", "#000")
+            .attr("y", 20)
+            .attr("x",  width/2 + 40)
+            .attr("dy", "1em")
+            .attr("text-anchor", "end")
+            .text("Price (microBTC/Miota)");
+
+        g_orders.append("g")
+            .call(volumeAxis)
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("y",  6)
+            .attr("dy", "0.71em")
+            .attr("text-anchor", "end")
+            .text("Quantity (Miota)");
+
+       g_orders.selectAll("rect").data(data)
+            .enter()
+            .append("rect")           
+            .attr("fill", function(d, i) { return d.type == 'ASK' ? 'green':'red'; })
+            .attr("x", function(d, i) { return Math.round(priceScale(d.price)) - 2; })
+            .attr("y", function(d, i) { return Math.round(volumeScale(d.qty)); })
+            .attr("height", function(d, i) { return height - Math.round(volumeScale(d.qty)); })
+            .attr("width", 4);
+
+    });
+
+    setTimeout(renderOrders, refreshRate);
+}
