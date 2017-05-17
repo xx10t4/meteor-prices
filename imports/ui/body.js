@@ -216,6 +216,31 @@ function renderOrders() {
             .attr("height", function(d, i) { return height - Math.round(volumeScale(d.qty)); })
             .attr("width", 4);
 
+        var legend = [{color: 'red',text:"Bid"},{color: 'green',text:"Ask"}];
+        var legend_x = width - 50;
+        var legend_y =10;
+        var legend_dy = 20;
+        var legend_size = 10;
+        g_orders.selectAll("rect.legend")
+            .data(legend)
+            .enter()
+            .append("rect")           
+            .attr("fill",  function(d){ return d.color;})
+            .attr("x", function(d,i){ return legend_x ;})
+            .attr("y", function(d,i){ return legend_y + (i * legend_dy) ;})
+            .attr("height", legend_size)
+            .attr("width", legend_size);
+
+        g_orders.selectAll("text.legend")
+            .data(legend)
+            .enter()
+            .append("text")
+            .attr("font-family", "sans-serif")
+            .attr("fill", "#000")
+            .attr("x", legend_x + 2 * legend_size)
+            .attr("y", function(d,i){ return legend_y + legend_size + (i * legend_dy) ;})
+            .text( function(d){ return d.text;});
+
     });
 
     setTimeout(renderOrders, refreshRate);
