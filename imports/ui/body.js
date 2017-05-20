@@ -34,8 +34,6 @@ var g_trades = undefined;
 
 function renderTrades() {
 
-  Meteor.call('trades.importFromIotaExchange');
-
   d3.json('/api/v1/trades', function(data) {
 
         data.forEach(function(val){
