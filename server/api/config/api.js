@@ -41,8 +41,23 @@ API = {
   methods: {
     trades: {
       GET: function( context, connection ) {
+        var start_time = connection.data.start;
+        var end_time = connection.data.end;
+
+        // Mogodb find() params
+        filters = {};
+        // filter date ranges
+        if(start_time || end_time){
+          filters.timestamp = {};
+          if(start_time){
+            filters.timestamp['$gte'] = new Date(Number(start_time));  
+          }
+          if(end_time){
+            filters.timestamp['$lt'] = new Date(Number(end_time));  
+          } 
+        }       
         var limit = 7000;
-        return  API.utility.response(context, 200, Trades.find({},{sort: {timestamp: -1}, limit: limit}).fetch());
+        return  API.utility.response(context, 200, Trades.find(filters,{sort: {timestamp: -1}, limit: limit}).fetch());
 
       }
     }

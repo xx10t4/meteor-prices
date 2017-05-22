@@ -5,19 +5,14 @@ import { Trades } from '../model/trades.js';
 import './body.html';
 
 const d3 = require("d3");
+var refreshRate = 5000; // refresh every 5s
+
+
 Template.body.onCreated(function bodyOnCreated() {
   this.state = new ReactiveDict();
-  Meteor.subscribe('trades');
-  renderTrades();
-  renderOrders();
+  this.state['time_range'] = 'all'; // set default time_range
+  renderGraphs(this, true);
 });
-
-Template.body.helpers({
-  trades() {
-    const instance = Template.instance();
-    return Trades.find({}, { sort: { createdAt: -1 } });
-  }
- });
 
 Template.body.events({
   'click .import-files'(event) {
@@ -25,16 +20,40 @@ Template.body.events({
   },
   'click .import-exchange'(event) {
     //Meteor.call('trades.importFromIotaExchange');
+  },
+  'change #time_range'(event) {
+    event.preventDefault();
+    var template = Template.instance();
+    template.state['time_range'] = event.target.value;
+    renderGraphs(template);
   }
-});
+}); 
 
-var refreshRate = 5000; // refresh every 5s
 var g_orders = undefined;
 var g_trades = undefined;
 
-function renderTrades() {
+function renderGraphs(template, do_loop = false) {
+  renderTrades(template);
+  renderOrders(template);
+  if(do_loop) {
+    setTimeout(function(){
+        renderGraphs(template, do_loop);
+    }, refreshRate);
+  }
+}
 
-  d3.json('/api/v1/trades', function(data) {
+function renderTrades(template) {
+
+  // filter by time range
+  var time_ranges = getDateRanges(template.state['time_range']);
+  var json_url = '/api/v1/trades?';
+  if(time_ranges[0]) {
+      json_url +=  'start=' + time_ranges[0];
+  }
+  if(time_ranges[1]) {
+      json_url += 'end=' + time_ranges[1];
+  }
+  d3.json(json_url, function(data) {
 
         data.forEach(function(val){
           // D3 needs the timestamps to be converted to Date, not sure why
@@ -55,7 +74,6 @@ function renderTrades() {
             height = +svg.attr("height") - margin.top - margin.bottom;
         var priceHeight = height * (2/3);
         var volumeHeight = priceHeight + 10;
-        console.log("width:"+svg.attr("width"));
 
         if(g_trades) g_trades.remove(); // after inital page load, need to remove() on each refresh
         g_trades = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -133,21 +151,17 @@ function renderTrades() {
             .attr("height", function(d, i) { return height - Math.round(volumeScale(d.quantity)); })
             .attr("width", 1);
   });
-
-  setTimeout(renderTrades, refreshRate);
 }
 
-function renderOrders() {
+function renderOrders(template) {
 
     d3.json('http://data.iotaexchange.com/proxy', function(d) {
 
         var all_orders = d['orders'];
         var data = [];
         all_orders.forEach( function (order) {
-            console.log("order:"+order)
             found = false;
             data.filter(function( ag_order ) {
-                console.log("ag_order:"+ag_order)
                 if(ag_order.price == order.price) {
                      
                     ag_order.qty += order.qty
@@ -158,8 +172,6 @@ function renderOrders() {
                 data.push(order);
             }
         });
-
-        console.log(data);
 
         var svg = d3.select("#svg_orders"),
             margin = {top: 20, right: 50, bottom: 30, left: 75},
@@ -240,6 +252,25 @@ function renderOrders() {
             .text( function(d){ return d.text;});
 
     });
+}
 
-    setTimeout(renderOrders, refreshRate);
+function getDateRanges(time_range){
+    var start_time = null;
+    var end_time = null;
+    switch(time_range) {
+        case "3_month":
+            start_time = moment().subtract(3, 'months').valueOf();
+            break;
+        case "1_month":
+            start_time = moment().subtract(1, 'months').valueOf();
+            break;
+        case "1_week":
+            start_time = moment().subtract(1, 'weeks').valueOf();
+            break;
+        case "1_day":
+            start_time = moment().subtract(1, 'days').valueOf();
+            break;
+        default:       
+    }
+    return [start_time, end_time];
 }

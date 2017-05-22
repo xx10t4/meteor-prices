@@ -15,6 +15,13 @@
     </header>
     <!-- need to explicitly set height and width (?) --> 
     <h3>Price History</h3>
+    <select id="time_range">
+      <option value="all">All time</option>
+      <option value="3_month">3 months</option>
+      <option value="1_month">1 month</option>
+      <option value="1_week">1 week</option>
+      <option value="1_day">1 day</option>
+    </select>
     <svg id="svg_trades" width="1000" height="400"></svg>
     <h3>Current Orders</h3>
     <svg id="svg_orders" width="1000" height="300"></svg>

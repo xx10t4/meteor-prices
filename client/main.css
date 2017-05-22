@@ -40,7 +40,8 @@ h1 {
 }
 
 h3 {
-  margin: 20px 0px 0px 75px
+  margin: 20px 20px 0px 75px;
+  display: inline-block;
 }
 #latestTrade span.label {
   display: inline-block;
