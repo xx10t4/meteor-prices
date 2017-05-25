@@ -2,7 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { Trades } from '../model/trades.js';
+import { Session } from 'meteor/session';
 import './body.html';
+import './components/modals/portfolioTracker.js'
+
+var miotaAmountKey = 'miotaAmount';
+var currencyKey = 'currency';
+var bitcoinRateKey = 'bitcoinRate';
 
 const d3 = require("d3");
 var refreshRate = 5000; // refresh every 5s
@@ -15,6 +21,9 @@ Template.body.onCreated(function bodyOnCreated() {
 });
 
 Template.body.events({
+  'click #portfolio_tracker button'(event) {
+    Modal.show('portfolioTracker');
+  },  
   'click .import-files'(event) {
     //Meteor.call('trades.importFromFiles');
   },
@@ -60,12 +69,27 @@ function renderTrades(template) {
           val.timestamp = Date.parse(val.timestamp);
         });
 
-        // Update the latestTrade indo in header
+        // Update the latestTrade info in header
         var latestTrade = data[0];
-        $('#latest_price').html( latestTrade.price);
+        var latestPrice = latestTrade.price;
+        $('#latest_price').html( latestPrice);
         $('#latest_quantity').html( latestTrade.quantity);
         $('#latest_timestamp').html( moment(latestTrade.timestamp).format('MM/DD/YYYY h:mm:ss a'));
         $('#latest_update').html( moment(Date.now()).format('h:mm:ss a'));
+
+        // Update profolio tracker
+        var miota_amount = Session.get(miotaAmountKey) || 0;
+        var bitcoin_rate = Session.get(bitcoinRateKey) || 0;
+        var currency = Session.get(currencyKey) || '';
+        var value =  (latestPrice * miota_amount * bitcoin_rate / 1000000).toFixed(0);
+        if(value > 0) {
+            $('#iota_value').html(value + ' ' + currency);
+        } else {
+            $('#iota_value').html('');
+        }
+        
+
+
 
         // Build the graph
         var svg = d3.select("#svg_trades"),
