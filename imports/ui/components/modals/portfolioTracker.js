@@ -41,17 +41,16 @@ function getBitcoinPrice() {
 
 	if( miotaAmount > 0 && currency != "") {
       var url = "http://api.coindesk.com/v1/bpi/currentprice/"+currency+".json";
+	  console.log("getBitcoinPrice url:"+url);
       //asynchronous GET
-      var result = HTTP.get(url, {timeout:10000}, function(error, result){
-		if(result.statusCode==200) {
-        var json = JSON.parse(result.content);
-        Session.set(bitcoinRateKey, json['bpi'][currency]['rate_float']);
+      HTTP.get(url, {timeout:20000}, function(error, result){
+		if(result && result.statusCode==200) {
+			var json = JSON.parse(result.content);
+			Session.set(bitcoinRateKey, json['bpi'][currency]['rate_float']);
+		} else {
+			console.log("Response issue: ", error);			
+		}
 		setTimeout(getBitcoinPrice, 60000);
-      } else {
-        console.log("Response issue: ", result.statusCode);
-        var errorJson = JSON.parse(result.content);
-        throw new Meteor.Error(result.statusCode, errorJson.error);
-      }
 	  });
 	} 
 }
