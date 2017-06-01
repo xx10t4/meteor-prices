@@ -16,7 +16,7 @@ var refreshRate = 5000; // refresh every 5s
 
 Template.body.onCreated(function bodyOnCreated() {
   this.state = new ReactiveDict();
-  this.state['time_range'] = 'all'; // set default time_range
+  this.state['time_range'] = '1_month'; // set default time_range
   renderGraphs(this, true);
 });
 
