@@ -68,6 +68,7 @@ Meteor.methods({
         var json = JSON.parse(result.content);
         var type;
         var trade;
+        var quantity;
         json.forEach(function(data, idx){
           if(idx < (json.length - 1)){
             
@@ -76,9 +77,13 @@ Meteor.methods({
             } else {
                 type = "UP";
             }
+            quantity = data[2] 
+            if( quantity < 0) {
+                quantity = quantity * -1; 
+            }
             trade = {
                 timestamp: data[1],
-                quantity: data[2],
+                quantity: quantity,
                 price: data[3] * 1000000,
                 type: type
             };  
