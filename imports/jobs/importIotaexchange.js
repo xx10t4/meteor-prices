@@ -5,7 +5,7 @@ SyncedCron.add({
     return parser.text('every 5 seconds');
   },
   job: function() {
-    return Meteor.call('trades.importFromIotaExchange');
+    return Meteor.call('trades.importFromBitfinex');
   }
 });
 

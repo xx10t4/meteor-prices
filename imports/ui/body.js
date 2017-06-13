@@ -179,22 +179,31 @@ function renderTrades(template) {
 
 function renderOrders(template) {
 
-    d3.json('http://data.iotaexchange.com/proxy', function(d) {
+    d3.json('https://api.bitfinex.com/v2/book/tIOTBTC/P2?len=100', function(responseData) {
 
-        var all_orders = d['orders'];
+        if(JSON.stringify(responseData).match(/error/)) {
+            return;
+        }
+        var type;
+        var qty;
         var data = [];
-        all_orders.forEach( function (order) {
-            found = false;
-            data.filter(function( ag_order ) {
-                if(ag_order.price == order.price) {
-                     
-                    ag_order.qty += order.qty
-                    found = true;    
-                }
-            });
-            if(!found){
-                data.push(order);
+        responseData.forEach( function (order) {
+           
+
+            if(order[2] < 0) {
+                type = "ASK";
+                qty = order[2] * -1;
+            } else {
+                type = "BID";
+                 qty = order[2]
             }
+
+            data.push({
+                type: type,
+                qty: qty,
+                price: order[0] * 1000000 
+            });
+
         });
 
         var svg = d3.select("#svg_orders"),

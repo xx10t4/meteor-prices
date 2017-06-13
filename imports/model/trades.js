@@ -49,7 +49,51 @@ Meteor.methods({
         throw new Meteor.Error(result.statusCode, errorJson.error);
       }
     }
+  },
+
+  'trades.importFromBitfinex'(params={}) {
+    
+     
+    if(Meteor.isServer){
+      var limit = params['limit'] || '500';
+      var start = params['start'] || undefined;
+      var qs = "limit="+limit;
+      if(start){
+          qs += "&start="+start
+      }   
+      var url = "https://api.bitfinex.com/v2/trades/tIOTBTC/hist?"+qs;
+      //synchronous GET
+      var result = HTTP.get(url, {timeout:10000});
+      if(result.statusCode==200) {
+        var json = JSON.parse(result.content);
+        var type;
+        var trade;
+        json.forEach(function(data, idx){
+          if(idx < (json.length - 1)){
+            
+            if(json[idx+1][3] > data[3]){
+                type = "DOWN";
+            } else {
+                type = "UP";
+            }
+            trade = {
+                timestamp: data[1],
+                quantity: data[2],
+                price: data[3] * 1000000,
+                type: type
+            };  
+            console
+            saveTrade(trade);
+          }
+        });
+      } else {
+        console.log("Response issue: ", result.statusCode);
+        var errorJson = JSON.parse(result.content);
+        throw new Meteor.Error(result.statusCode, errorJson.error);
+      }
+    }
   }
+
  });
 
 
