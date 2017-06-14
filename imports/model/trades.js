@@ -57,11 +57,16 @@ Meteor.methods({
     if(Meteor.isServer){
       var limit = params['limit'] || '500';
       var start = params['start'] || undefined;
+      var end = params['end'] || undefined;
       var qs = "limit="+limit;
       if(start){
           qs += "&start="+start
       }   
+      if(end){
+          qs += "&end="+end
+      }   
       var url = "https://api.bitfinex.com/v2/trades/tIOTBTC/hist?"+qs;
+      console.log(url)
       //synchronous GET
       var result = HTTP.get(url, {timeout:10000});
       if(result.statusCode==200) {
