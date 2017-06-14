@@ -66,7 +66,6 @@ Meteor.methods({
           qs += "&end="+end
       }   
       var url = "https://api.bitfinex.com/v2/trades/tIOTBTC/hist?"+qs;
-      console.log(url)
       //synchronous GET
       var result = HTTP.get(url, {timeout:10000});
       if(result.statusCode==200) {

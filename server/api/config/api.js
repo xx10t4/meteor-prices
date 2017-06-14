@@ -56,7 +56,7 @@ API = {
             filters.timestamp['$lt'] = new Date(Number(end_time));  
           } 
         }       
-        var limit = 20000;
+        var limit = 50000;
         return  API.utility.response(context, 200, Trades.find(filters,{sort: {timestamp: -1}, limit: limit}).fetch());
 
       }
