@@ -6,7 +6,8 @@
       <button class="import-files"> import files </button>
       <button class="import-exchange"> import iotaexchange </button>
       -->
-      <div id="portfolio_tracker"><button>My IOTA value</button> <span id="iota_value"></span></div>
+      <div class="notice"><h4>It's getting crowded here!</h4> We are experiencing a significant jump in traffic since the Bitfinex exchange launch, which is awesome. We are working on improving things to handle the increased load. In the meantime we have temporarily reduced functionality to make the site work better for most people who are looking for recent prices and order book info.</div> 
+      <!-- TEMP TURN OFF <div id="portfolio_tracker"><button>My IOTA value</button> <span id="iota_value"></span></div>-->
       <div id="latest_trade">Latest Trade
         <span class="price label">Price <span id="latest_price"></span></span> 
         <span class="quantity label">Quantity <span id="latest_quantity"></span></span>
@@ -17,11 +18,10 @@
     <!-- need to explicitly set height and width (?) --> 
     <h3>Price History</h3>
     <select id="time_range">
-      <option value="all">All time</option>
       <option value="3_month">3 months</option>
-      <option value="1_month" selected="selected">1 month</option>
+      <option value="1_month">1 month</option>
       <option value="1_week">1 week</option>
-      <option value="1_day">1 day</option>
+      <option value="1_day" selected="selected">1 day</option>
     </select>
     <svg id="svg_trades" width="1000" height="400"></svg>
     <h3>Current Orders</h3>

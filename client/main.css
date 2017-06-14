@@ -45,6 +45,15 @@ h3 {
   display: inline-block;
 }
 
+header .notice {
+  background-color: #fff8e5;
+  padding: 5px;
+  font-size: .75em;
+  float:right;
+  width: 30%;
+  border-radius: 5px;
+}
+
 #portfolio_tracker {
   display: inline-block;
   float: right;
